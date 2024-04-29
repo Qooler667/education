@@ -2,55 +2,56 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="Styles\style.css">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="Styles\style.css">
+  <title>Document</title>
 </head>
 
 <body>
-    <div class="left_list">
-        <div class="wrapper">
-            <ol class="list_items blue_color design_border_first">
-                <li class="item">Lorem ipsum dolor sit amet </li>
-                <li class="item">consectetur, adipisicing elit.</li>
-                <li class="item">Laudantium eligendi dolor nisi</li>
-                <li class="item">maiores quibusdam ad maxime</li>
-                <li class="item">eos labore ipsam autem facere</li>
-            </ol>
-        </div>
-        <div class="wrapper">
-            <ul class="list_items orange_color design_border_second">
-                <li class="item">Lorem ipsum dolor sit amet</li>
-                <li class="item">consectetur, adipisicing elit.</li>
-                <li class="item">Laudantium eligendi dolor nisi</li>
-                <li class="item">maiores quibusdam ad maxime</li>
-                <li class="item">eos labore ipsam autem facere</li>
-            </ul>
-        </div>
-    </div>
-    <div class="rigth_list">
+<h1 class="page-title">Search Universitet by Country</h1>
+<form id="search-form" class="search-form" action="#">
+  <label for="country">Country:</label>
+  <input type="text" name="country" id="country" required min="5"/>
+  <input type="submit" value="Search"/>
+</form>
+<div class="search-result">
+  <ol id="search-result-list" class="list_items blue_color design_border_first"></ol>
+  <span id="not-found" class="not-found-text">Not found</span>
+</div>
+<script>
+  const searchForm = document.getElementById("search-form");
+  const searchResultList = document.getElementById("search-result-list");
+  const notFoundHelper = document.getElementById("not-found");
 
-        <div class="wrapper">
-            <ul class="list_items light_green design_border_third">
-                <li class="item">Lorem ipsum dolor sit amet</li>
-                <li class="item">consectetur, adipisicing elit.</li>
-                <li class="item">Laudantium eligendi dolor nisi</li>
-                <li class="item">maiores quibusdam ad maxime</li>
-                <li class="item">eos labore ipsam autem facere</li>
-            </ul>
-        </div>
-        <div class="wrapper">
-            <ul class="list_items red_color design_border_fourth">
-                <li class="item">Lorem ipsum dolor sit amet</li>
-                <li class="item">consectetur, adipisicing elit.</li>
-                <li class="item">Laudantium eligendi dolor nisi</li>
-                <li class="item">maiores quibusdam ad maxime</li>
-                <li class="item">eos labore ipsam autem facere</li>
-            </ul>
-        </div>
-    </div>
+  searchForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    while (searchResultList.firstChild) {
+      searchResultList.removeChild(searchResultList.firstChild)
+    }
+
+    notFoundHelper.style.display = 'none';
+
+    const formData = new FormData(e.target);
+    const value = encodeURIComponent(formData.get("country"));
+
+    const res = await fetch(`http://universities.hipolabs.com/search?country=${value}`);
+    const resData = await res.json()
+
+    if (resData.length) {
+      resData.map(item => {
+        let li = document.createElement("li");
+        li.className = "item";
+        li.innerText = item.name;
+        searchResultList.appendChild(li);
+      })
+    } else {
+      notFoundHelper.style.display = 'block';
+    }
+  });
+</script>
 </body>
 
 </html>
